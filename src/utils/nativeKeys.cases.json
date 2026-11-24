@@ -1,0 +1,142 @@
+{
+  "//": "The one table of the optional Builder keys: each copy of the rule (src/utils/nativeKeys.ts, ios/native_keys.rb, android NativeKeys.kt) is tested with it. `off`: the key switches its feature off; `on`: a real value.",
+  "generic": {
+    "off": [
+      "",
+      " ",
+      "\t\n",
+      "none",
+      "None",
+      "NONE",
+      " none ",
+      "null",
+      "NULL",
+      " Null ",
+      "-",
+      " - ",
+      "0",
+      " 0 ",
+      "_GOOGLE_MAPS_API_KEY_",
+      "_INTERCOM_API_KEY_",
+      "_INTERCOM_APP_ID_",
+      "_FACEBOOK_ID_",
+      "__MERCHANT_ID__",
+      "__"
+    ],
+    "on": [
+      "AIzaSyA-123_abc",
+      " AIzaSyA-123 ",
+      "ios_sdk-0123abcd",
+      "ab12cd34",
+      "00",
+      "0.1",
+      "--",
+      "_",
+      "nonexistent",
+      "nullable",
+      "_lower_case_",
+      "A_B",
+      "1"
+    ]
+  },
+  "merchant_id": {
+    "off": [
+      "",
+      " ",
+      "none",
+      "NONE",
+      "null",
+      "-",
+      "0",
+      "_MERCHANT_ID_",
+      "__MERCHANT_ID__",
+      "com.ordering.v5app5",
+      "merchant",
+      "merchant.",
+      "merchant. ",
+      "Merchant.com.ordering.app",
+      "x.merchant.com.ordering.app",
+      "merchant.com.ordering app",
+      "group.com.ordering.app"
+    ],
+    "on": [
+      "merchant.com.ordering.app",
+      " merchant.com.ordering.app ",
+      "merchant.co.ordering.app-1",
+      "merchant.x"
+    ]
+  },
+  "facebook_id": {
+    "off": [
+      "",
+      " ",
+      "none",
+      "NONE",
+      "null",
+      "-",
+      "0",
+      "00",
+      "_FACEBOOK_ID_",
+      "fb1234567890",
+      "1234 5678",
+      "12345a",
+      "1.5",
+      "-1",
+      "+1",
+      "１２３"
+    ],
+    "on": [
+      "1234567890",
+      " 1234567890 ",
+      "1",
+      "0123",
+      "102030405060708"
+    ]
+  },
+  "facebook_client_token": {
+    "off": [
+      "",
+      " ",
+      "none",
+      "NONE",
+      "null",
+      "NULL",
+      "-",
+      "_FACEBOOK_CLIENT_TOKEN_"
+    ],
+    "on": [
+      "0",
+      " 0 ",
+      "00",
+      "0a1b2c3d4e5f60718293a4b5c6d7e8f9",
+      " 0a1b2c3d ",
+      "abcdef"
+    ]
+  },
+  "google_reversed_client_id": {
+    "off": [
+      "",
+      " ",
+      "none",
+      "NONE",
+      "null",
+      "-",
+      "0",
+      "_REVERSED_CLIENT_ID_",
+      "com.googleusercontent.apps",
+      "com.googleusercontent.apps.",
+      "com.googleusercontent.apps. ",
+      "123-abc.apps.googleusercontent.com",
+      "COM.GOOGLEUSERCONTENT.APPS.123-abc",
+      "com.googleusercontent.apps.123 abc",
+      "fb1234567890",
+      "xcom.googleusercontent.apps.123-abc",
+      "com.googleusercontent.apps.123_abc"
+    ],
+    "on": [
+      "com.googleusercontent.apps.123-abc",
+      " com.googleusercontent.apps.123-abc ",
+      "com.googleusercontent.apps.1"
+    ]
+  }
+}

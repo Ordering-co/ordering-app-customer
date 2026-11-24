@@ -1,0 +1,91 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+  <queries>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="http"/>
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="https"/>
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="geo" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="google.navigation" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <data android:scheme="applemaps" />
+    </intent>
+  </queries>
+
+  <application
+    android:name=".MainApplication"
+    android:usesCleartextTraffic="${usesCleartextTraffic}"
+    android:label="@string/app_name"
+    android:hardwareAccelerated="true"
+    android:largeHeap="true"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:allowBackup="false"
+    android:theme="@style/AppTheme"
+    android:supportsRtl="true">
+    <meta-data
+    android:name="com.google.android.maps.v2.API_KEY"
+    android:value="_GOOGLE_MAPS_API_KEY_" />
+    <meta-data
+    android:name="com.facebook.sdk.ApplicationId"
+    android:value="@string/facebook_app_id" />
+    <meta-data
+    android:name="com.facebook.sdk.ClientToken"
+    android:value="@string/facebook_client_token" />
+    <!-- Facebook's SDK does not start itself: its provider calls it whatever the keys (an id that
+         is not one, an empty one). MainApplication starts it when the keys are set (NativeKeys.kt). -->
+    <provider
+    android:name="com.facebook.internal.FacebookInitProvider"
+    android:authorities="${applicationId}.FacebookInitProvider"
+    tools:node="remove" />
+    <!-- A push that arrives with the app in the background would start React Native for Firebase's
+         headless task, and our handler does nothing (index.js): the service is out. The tap on a
+         notification does not need it (getInitialNotification, onNotificationOpenedApp). -->
+    <service
+    android:name="io.invertase.firebase.messaging.ReactNativeFirebaseMessagingHeadlessService"
+    tools:node="remove" />
+    <!-- Push notifications' small icon: a white silhouette (docs/ICONS.md) -->
+    <meta-data
+    android:name="com.google.firebase.messaging.default_notification_icon"
+    android:resource="@drawable/ic_stat_onesignal_default" />
+    <activity
+      android:name=".MainActivity"
+      android:label="@string/app_name"
+      android:theme="@style/BootTheme"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustResize"
+      android:screenOrientation="portrait"
+      android:exported="true">
+      <intent-filter>
+          <action android:name="android.intent.action.MAIN" />
+          <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="_APP_SCHEME_" />
+      </intent-filter>
+    </activity>
+
+  </application>
+</manifest>

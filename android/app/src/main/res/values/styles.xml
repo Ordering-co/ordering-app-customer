@@ -1,0 +1,21 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!-- Force light mode -->
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+
+    <!-- The splash (react-native-bootsplash): the logo drawable-*/bootsplash_logo.png
+         over @color/bootsplash_background, until JS hides it (src/utils/splash.ts). -->
+    <style name="BootTheme" parent="Theme.BootSplash">
+        <!-- Dark status and navigation bar icons over the splash's light background, in dark mode too -->
+        <item name="darkContentBarsStyle">true</item>
+        <item name="bootSplashBackground">@color/bootsplash_background</item>
+        <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+        <item name="postBootSplashTheme">@style/AppTheme</item>
+    </style>
+
+</resources>

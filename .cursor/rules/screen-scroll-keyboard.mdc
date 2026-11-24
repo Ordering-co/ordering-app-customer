@@ -1,0 +1,62 @@
+---
+description: Scroll and keyboard behavior for marketplace screens with inputs
+globs: src/ui/**/*.tsx,src/pages/**/*.tsx
+alwaysApply: false
+---
+
+# Screen scroll and keyboard
+
+Apply this on every screen that has text inputs, including each Maweja page.
+
+- Hide the scroll indicator: `showsVerticalScrollIndicator={false}`.
+- Put bottom spacing on `contentContainerStyle`, not on the ScrollView style. Include the safe area plus extra space so the last button can scroll fully into view.
+- One vertical scroll per screen. An embedded form must not start a second ScrollView (`scrollEnabled={false}` when it sits inside a parent scroll).
+- While the keyboard is open, the user must be able to scroll to the submit button and tap it without dismissing the keyboard first. Set `keyboardShouldPersistTaps="handled"`. On iOS, add the keyboard height to the content bottom padding (`useKeyboardInset`). Android already resizes the window.
+- Do not leave the action button behind the keyboard.
+- Maweja chrome uses `colors.primary`. Do not hardcode the red from the still. Validation errors stay `colors.danger`.
+
+# Maweja listing
+
+Match the stills. Keep the original layout when the design is not maweja.
+
+- Top business cards are the compact ones: smaller width, shorter image, logo and name over the photo, time and delivery on one line under it.
+- Store cards keep a border and inner padding. Fill the empty space with store data that already exists: type, time, delivery price, and distance. Separate those facts with a bar and keep that row inside the text block, under the store name and beside the logo, not as a full-width row under the logo. Show the same values and format as the original card: the fee goes through `parsePrice` even when it is zero, never a "free delivery" label.
+- Categories are one horizontal line of pills. The selected pill uses the brand color. Do not stack them in a second row.
+- Search, notifications, and the cart stay fixed above the list while it scrolls. Pickup and the map stay in the scrolling content. Do not change where those controls navigate.
+- While list content passes under that bar, its background switches to `colors.primary`, including the status bar and notch. At the top of the list it returns to the page background.
+
+# Maweja business menu
+
+The business screen is two steps. Keep the original menu when the design is not maweja.
+
+- First step: business hero, then a two-column grid of the categories the core already returns. No synthetic All or Featured tile.
+- Second step: the selected category's products. The back control returns to the grid. The hero back leaves the business.
+- Product rows keep the existing product action: options open the product screen, and one-click add stays behind its config.
+- Do not add the chat button from the still, and do not change the tab bar.
+
+# Maweja cart
+
+Keep the original cart when the design is not maweja. There are two pages.
+
+- The header cart button opens the cart list. Each row is one business cart: name, product count, total. The count on this page is carts, not products. Opening a row pushes that business cart.
+- The business page opens only the cart for the store you are in. That page lists products, and its checkout button is the step into checkout.
+- On the business cart, the header is the title, the product count, and the trash control. The delivery address is a card in the scroll. Checkout is full width and stays fixed at the bottom.
+- Change on the address card opens `AddressList` (or `AddressForm` for a guest) with `isGoBack: true`. Picking, editing, or creating an address returns to this cart, never to Home. The list replaces itself with the form so one back lands on the cart.
+
+# Maweja checkout
+
+Keep the original checkout when the design is not maweja. The place-order path, payment forms, and validation stay.
+
+- Articles is the product list: photo, name, quantity times price, line total.
+- Recipient shows the saved customer values. Edit on the title opens the fields, and Close returns to those values.
+- Delivery address is a card in the scroll, not the page header.
+- There is no selected-method summary card. The method list is vertical cards. Wallets and loyalty points are not shown in the Maweja checkout.
+- The card_delivery gateway is labeled Mobile Money. Its hint lists M-Pesa, Orange Money, Airtel Money, and IllicoCash.
+- The invoice keeps the existing totals, adds the delivery zone when the cart has one, and shows the estimated time and the secure-payment note when those values exist.
+
+# Maweja order details
+
+Keep the current order details content. The Maweja pieces are added for the tracking stills and do not replace the existing header, products, addresses, comments, or payment rows.
+
+- Tracking header, status pill, pending and delivered banners, delivery progress, driver map card, delivery agent title, and summary title.
+- Confirmed and on-the-way banners, the third driver action, and pickup-specific steps are not in this pass. The existing blocks stay so those gaps stay visible.

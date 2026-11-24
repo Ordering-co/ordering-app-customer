@@ -1,0 +1,78 @@
+key,value,app_uses,submodule_uses
+"RECAPTCHA_VALIDATION_IS_REQUIRED","The captcha validation is required",0,2
+"RECAPTCHA_VALIDATION_IS_REQUIRED","The ReCaptcha validation is required.",0,3
+"NETWORK_ERROR","Network Error",0,2
+"NETWORK_ERROR","Network error",1,1
+"NETWORK_ERROR","Network Error, please reload the app",1,0
+"LOADING","Loading",14,13
+"LOADING","Loading...",1,0
+"IN_PROGRESS","In Progress",0,1
+"IN_PROGRESS","In progress",1,0
+"IN_QUEUE","In Queue",0,1
+"IN_QUEUE","In queue",1,0
+"EXPIRED","Logistic expired",0,1
+"EXPIRED","Expired",1,0
+"OK","Ok",2,2
+"OK","oK",3,0
+"STRIPE_LOAD_ERROR","Failed to load Stripe properly",0,1
+"STRIPE_LOAD_ERROR","Faile to load Stripe properly",0,1
+"KM","km",0,2
+"KM","Km",1,0
+"REJECTED_BY_DRIVER","Rejected by driver",0,1
+"REJECTED_BY_DRIVER","Rejected by Driver",1,0
+"ORDER_PICKEDUP_COMPLETED_BY_CUSTOMER","Pickup completed by customer",0,1
+"ORDER_PICKEDUP_COMPLETED_BY_CUSTOMER","Order picked up completed by customer",2,0
+"ORDER_NOT_PICKEDUP_BY_CUSTOMER","Not picked by customer",0,1
+"ORDER_NOT_PICKEDUP_BY_CUSTOMER","Order not picked up by customer",2,0
+"ORDERS","Orders",3,0
+"ORDERS","orders",1,0
+"ADD_ADDRESS","Add address",1,0
+"ADD_ADDRESS","Add a address",3,0
+"ERROR_UNKNOWN","An error occurred",1,0
+"ERROR_UNKNOWN","An error has occurred",1,0
+"MY_ACCOUNT","My account",2,0
+"MY_ACCOUNT","My Account",1,0
+"CANCEL","Cancel",13,0
+"CANCEL","cancel",2,0
+"DELIVERY_FEE","Delivery fee",4,0
+"DELIVERY_FEE","Delivery Fee",10,0
+"CLEAR_CART","Clear cart",1,0
+"CLEAR_CART","Clear Cart",3,0
+"NOT_AVAILABLE","Not Available",1,0
+"NOT_AVAILABLE","Not available",4,0
+"MISSING_RESERVATION","Missing Reservation",1,0
+"MISSING_RESERVATION","Missing reservation",1,0
+"CUSTOMER_DETAILS","Customer details",2,0
+"CUSTOMER_DETAILS","Customer Details",4,0
+"TRY_AGAIN","Try again",1,0
+"TRY_AGAIN","Please try again",2,0
+"EMAIL","Email",8,0
+"EMAIL","EMail",1,0
+"GIFT_CARD","Gift Card",1,0
+"GIFT_CARD","Gift card",2,0
+"VALIDATION_ERROR_REQUIRED","Code is required",1,0
+"VALIDATION_ERROR_REQUIRED","To email is required",1,0
+"VALIDATION_ERROR_REQUIRED","The quantity field is required",1,0
+"PASSWORD","Password",7,0
+"PASSWORD","password",1,0
+"TO","To",1,0
+"TO","to",2,0
+"VALIDATION_ERROR_MOBILE_PHONE_REQUIRED","The field Mobile phone is required.",2,0
+"VALIDATION_ERROR_MOBILE_PHONE_REQUIRED","The field Mobile phone is required",3,0
+"VALIDATION_ERROR_MOBILE_PHONE_REQUIRED","The field Phone Number is required.",1,0
+"POINTS","Points",3,0
+"POINTS","points",1,0
+"PAYMENT_METHODS","Payment Methods",1,0
+"PAYMENT_METHODS","Payment methods",1,0
+"ESTIMATED_TIME","Estimated Time",1,0
+"ESTIMATED_TIME","Estimated time",1,0
+"ORDER_REVIEWED","Order Reviewed",1,0
+"ORDER_REVIEWED","This order has been already reviewed",3,0
+"COMMENTS","Comments",4,0
+"COMMENTS","Special comment",1,0
+"SPECIAL_COMMENT","Special comment",1,0
+"SPECIAL_COMMENT","Special Comment",1,0
+"QUESTION_DELETE_CARD","Are you sure you want to delete this card?",1,0
+"QUESTION_DELETE_CARD","Are you sure that you want to delete the card?",1,0
+"CONNECTION_STATUS","Status",1,0
+"CONNECTION_STATUS","Connection status",1,0

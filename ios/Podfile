@@ -1,0 +1,166 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native-permissions/scripts/setup.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, min_ios_version_supported
+
+# react-native-firebase resolves Firebase through Swift Package Manager by
+# default, which needs dynamic frameworks; the app links its pods statically,
+# so Firebase comes from CocoaPods (firebase-ios-sdk 12.x, the last on trunk).
+$RNFirebaseDisableSPM = true
+# Stripe likewise: its pods instead of its Swift packages (stripe-react-native
+# 0.83 is the last release that still accepts them).
+$StripeDisableSPM = true
+prepare_react_native_project!
+
+setup_permissions(['AppTrackingTransparency', 'Notifications'])
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+# The optional keys the Builder writes (Google Maps, Facebook, Google Sign-In,
+# Apple Pay, Intercom) and what the build does with the ones that are off:
+# native_keys.rb, iOS's one copy of the rule.
+require_relative 'native_keys'
+
+# The app signs with ReactNativeAppsTemplate5.signing.entitlements (gitignored),
+# written here from ReactNativeAppsTemplate5.entitlements, where the Builder
+# writes the Apple Pay merchant id. Without a real one (`merchant.…`) the Apple
+# Pay entitlement is left out: the provisioning profiles are made from the
+# bundle id, and one whose App ID has no Apple Pay (or not that merchant) would
+# fail the signing. The Builder's pipeline runs `pod install` on the code it
+# already replaced; a developer who edits the .entitlements later is stopped by
+# the build phase below, which writes the signing ones again.
+def write_signing_entitlements(app_dir, app_name)
+  source = File.join(app_dir, "#{app_name}.entitlements")
+  target = File.join(app_dir, "#{app_name}.signing.entitlements")
+  NativeKeys.write_signing_entitlements(source, target)
+  Pod::UI.puts 'Apple Pay off: no merchant id (the signing entitlements leave it out)'.yellow unless NativeKeys.apple_pay?(target)
+end
+
+# The system's Ruby is enough for native_keys.rb (no gem).
+NATIVE_KEYS_RUBY = 'RUBY="$(command -v ruby || echo /usr/bin/ruby)"'
+
+# The notification service extension (rich pushes: images, buttons; confirmed
+# deliveries). Same version as react-native-onesignal's podspec: one version
+# of the pod for both targets.
+target 'OneSignalNotificationServiceExtension' do
+  pod 'OneSignalXCFramework', '5.8.1'
+end
+
+target 'ReactNativeAppsTemplate5' do
+
+  # The signing entitlements must come from today's .entitlements (native_keys.rb).
+  script_phase :name => 'Native keys: signing entitlements',
+               :script => "set -e\n#{NATIVE_KEYS_RUBY}\n\"$RUBY\" \"$SRCROOT/native_keys.rb\" check-entitlements\n",
+               :execution_position => :before_compile,
+               :input_files => ['$(SRCROOT)/native_keys.rb'],
+               :always_out_of_date => '1'
+
+  # The built Info.plist: no URL type of a key that is off, and what the app may
+  # start (`OrderingNativeFeatures`, read by AppDelegate.swift). After Xcode
+  # writes the Info.plist (its input).
+  script_phase :name => 'Native keys: Info.plist',
+               :script => "set -e\n#{NATIVE_KEYS_RUBY}\n\"$RUBY\" \"$SRCROOT/native_keys.rb\" info-plist\n",
+               :execution_position => :any,
+               :input_files => ['$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)', '$(SRCROOT)/native_keys.rb'],
+               :always_out_of_date => '1'
+
+  # React Native Maps with the Google provider (brings GoogleMaps and
+  # Google-Maps-iOS-Utils at the versions it supports).
+  pod 'react-native-maps/Google', :path => '../node_modules/react-native-maps'
+
+  # Enable modular headers for Firebase dependencies (required for Swift pods)
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
+  pod 'FirebaseCoreExtension', :modular_headers => true
+  # GoogleSignIn 10 (@react-native-google-signin/google-signin 17) brings the
+  # Swift pod AppCheckCore, which imports RecaptchaInterop: a module map is
+  # needed for it to link statically.
+  pod 'RecaptchaInterop', :modular_headers => true
+
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    write_signing_entitlements(File.join(__dir__, 'ReactNativeAppsTemplate5'), 'ReactNativeAppsTemplate5')
+
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    # Fix fmt 11.x consteval regression on Xcode 26 / newer Apple Clang
+    fmt_base_header = File.join(installer.sandbox.root, 'fmt/include/fmt/base.h')
+    if File.exist?(fmt_base_header)
+      content = File.read(fmt_base_header)
+      patched = content.gsub(
+        /defined\(__apple_build_version__\) && __apple_build_version__ < \d+L/,
+        'defined(__apple_build_version__)'
+      )
+      File.write(fmt_base_header, patched) if patched != content
+    end
+
+    # Allow non-modular includes in framework modules
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_config|
+        build_config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+
+        # Disable bitcode (no longer supported by Apple since Xcode 14)
+        build_config.build_settings['ENABLE_BITCODE'] = 'NO'
+
+        # No pod targets less than the app (React Native's minimum): Xcode 26+
+        # refuses targets below iOS 15 (some pods' resource bundles ask for 12/13).
+        if build_config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < min_ios_version_supported.to_f
+          build_config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = min_ios_version_supported
+        end
+
+        # Configure modular headers for intercom-react-native
+        if target.name == 'intercom-react-native'
+          build_config.build_settings['DEFINES_MODULE'] = 'YES'
+          build_config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+          build_config.build_settings['PRODUCT_MODULE_NAME'] = 'IntercomModule'
+        end
+      end
+    end
+
+    # Strip bitcode from Intercom framework (required for App Store submission)
+    bitcode_strip_path = `xcrun --find bitcode_strip`.chomp
+    Dir.glob("#{installer.config.installation_root}/Pods/Intercom/*.xcframework/**/*.framework/Intercom").each do |framework|
+      system("#{bitcode_strip_path} -r #{framework} -o #{framework}")
+    end
+
+    # Ensure TARGETED_DEVICE_FAMILY is set to iPhone + iPad via xcconfig
+    installer.aggregate_targets.each do |aggregate_target|
+      aggregate_target.xcconfigs.each do |config_name, config_file|
+        config_file.attributes['TARGETED_DEVICE_FAMILY'] = '1,2'
+        xcconfig_path = aggregate_target.xcconfig_path(config_name)
+        config_file.save_as(xcconfig_path)
+      end
+    end
+  end
+end
